@@ -12,7 +12,7 @@ macroclass objc_type_alias {
   }
   pattern {
     rule { ( $name:ident ) }
-    with $pointer = #{ 1 $to$pointer }
+    with $pointer = 0
   }
   pattern {
     rule { $name:ident }
