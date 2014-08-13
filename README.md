@@ -18,6 +18,13 @@ sjs my_hyperloop_source.js --module hyperloop-macros/obj-c
 
 ## Usage
 
+### Common
+
+```js
+// Activate Hyperloop for this file
+use hyperloop;
+```
+
 ### Objective-C
 
 ```js
