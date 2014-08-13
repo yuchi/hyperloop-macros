@@ -142,11 +142,41 @@ macro class {
   }
 }
 
+macroclass objc_message_param_alias {
+  pattern { rule { $part $[:] $arg:expr } }
+}
+
+macro (@) {
+  case infix {
+      $receiver:expr | $ctx $method ( $first:expr , $rest:objc_message_param_alias (,) ... )
+  } => {
+    var parts = #{ $rest$part ... };
+    var name = #{ $method }.concat(#{ $rest$part ... }).map(unwrapSyntax).concat('').join(':');
+    letstx $name = [ makeValue(name, #{ $ctx }) ];
+    return #{ Hyperloop.method($receiver, $name).call( $first, $($rest$arg) (,) ... ) };
+  }
+  case infix {
+      $receiver:expr | $ctx $method ( $first:expr )
+  } => {
+    var name = unwrapSyntax(#{ $method }) + ':';
+    letstx $name = [ makeValue(name, #{ $ctx }) ];
+    return #{ Hyperloop.method($receiver, $name).call( $first ) };
+  }
+  case infix {
+      $receiver:expr | $ctx $method ( )
+  } => {
+    var name = unwrapSyntax(#{ $method });
+    letstx $name = [ makeValue(name, #{ $ctx }) ];
+    return #{ Hyperloop.method($receiver, $name).call( ) };
+  }
+}
+
 // Public
 
 export use;
 export as;
 export class;
+export (@);
 
 // Protected
 

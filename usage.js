@@ -89,3 +89,10 @@ console.log( objc_type_name UIWindow );
 console.log( objc_type_name 'UIWindow**' );
 console.log( objc_type_name 'UIWindow*' );
 console.log( objc_type_name 'UIWindow' );
+
+var message;
+
+console.log( receiver@message(  ) );
+console.log( receiver@message( 42 as Answer ) );
+console.log( receiver@message( 42, with: 32 ) );
+console.log( receiver@message( 42, with: 24, and: 58 ) );
