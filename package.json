@@ -1,0 +1,17 @@
+{
+  "name": "hyperloop-macros",
+  "version": "0.1.0",
+  "description": "Macros to accelerate Hyperloop development",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sweet-macros",
+    "hyperloop",
+    "appcelerator",
+    "macros",
+    "macro"
+  ],
+  "author": "Pier Paolo Ramon",
+  "license": "LGPL 2.1"
+}
