@@ -13,5 +13,13 @@
     "macro"
   ],
   "author": "Pier Paolo Ramon",
-  "license": "LGPL 2.1"
+  "license": "LGPL 2.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuchi/hyperloop-macros.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuchi/hyperloop-macros/issues"
+  },
+  "homepage": "https://github.com/yuchi/hyperloop-macros"
 }
