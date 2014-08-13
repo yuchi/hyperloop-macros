@@ -4,8 +4,16 @@ macro use {
 }
 
 macro as {
+  rule infix { $l:lit | $r:objc_type_name } => {
+    $l.cast($r)
+  }
+  rule infix { $l:ident | $r:objc_type_name } => {
+    ($l != null) && $l.cast($r)
+  }
   rule infix { $l:expr | $r:objc_type_name } => {
-    (($l != null) && $l.cast($r))
+    (function (v) {
+      return (v != null) && v.cast($r);
+    })($l)
   }
 }
 
