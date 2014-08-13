@@ -1,8 +1,13 @@
-/*macroclass objc_method {
-  pattern {
-    rule { $part:ident * }
+macro use {
+  rule { hyperloop } => { "use hyperloop" }
+  rule { strict } => { "use strict" }
+}
+
+macro as {
+  rule infix { $l:expr | $r:objc_type_name } => {
+    (($l != null) && $l.cast($r))
   }
-}*/
+}
 
 macroclass objc_type_alias {
   pattern {
@@ -19,6 +24,11 @@ macroclass objc_type_alias {
     with $pointer = 0
   }
   pattern {
+    rule { ( void ) }
+    with $name = #{ "void" }
+    with $pointer = 0
+  }
+  pattern {
     rule { void }
     with $name = #{ "void" }
     with $pointer = 0
@@ -32,15 +42,11 @@ macro objc_type_name {
   }
   case { _ $t:objc_type_alias } => {
     var name = #{ $t$pointer }.reduce(function (memo, stx) {
-      return memo + (stx.token.value ? '*' : '');
+      return memo + (stx.token.value ? ' *' : '');
     }, unwrapSyntax(#{ $t$name }));
 
     return [ makeValue(name, #{ $t$name }) ];
   }
-}
-
-macroclass objc_method_params_alias_x {
-  pattern { rule { $name:ident : $l:objc_type_name $arg:ident } };
 }
 
 macroclass objc_method_params_alias {
@@ -69,22 +75,6 @@ macroclass objc_method_alias {
   pattern { rule { + $returns:objc_type_name $params:objc_method_params $body } with $static = #{1} }
   pattern { rule { - $returns:objc_type_name $params:objc_method_params $body } with $static = #{0} }
 }
-
-macro extract {
-  case { _ $x } => { return [ makeValue(null, #{ $x }) ] }
-}
-
-/*macro objc_method {
-  rule { $m:objc_method_alias } => {
-    {
-        name: (extract $m$params),
-        static: $m$static,
-        returns: $m$returns,
-        arguments: (extract $m$params),
-        action: function () $m$body
-    }
-  }
-}*/
 
 macro objc_method {
   case { $ctx $m:objc_method_alias } => {
@@ -128,22 +118,85 @@ macro objc_method {
   }
 }
 
+macro objc_class_meta {
+  rule { extends $type:objc_type_name } => { .implements($type) }
+  rule { $mode:ident $type:objc_type_name } => { .$mode($type) }
+}
+
 macro class {
   rule {
-
-    native $className:ident {
+    native $className:ident
+      $($meta:objc_class_meta) ...
+    {
       $($m:objc_method ) ...
     }
-
   } => {
     Hyperloop.defineClass($className)
-      $(
-        .method($m)
-      ) ...
+      $meta ...
+      $( .method($m) ) ...
+      .build();
   }
 }
 
-class native GestureRecognizer {
+// Usage
+// =====
+
+use strict;
+use hyperloop;
+
+var cachedLocation = null;
+var calculateManually = false;
+var totalTraveled = 0;
+var cachedSpeed = 0;
+var cachedLocation = 0;
+
+class native LocDelegate extends NSObject protocol CLLocationManagerDelegate {
+  - (void) locationManager:(CLLocationManager *) locationManager
+        didUpdateLocations:(NSArray *) locations {
+
+    var locations = didUpdateLocations as NSArray;
+    var i = 0, l = locations.count();
+    var location;
+    var coordinate;
+    var lastLocation;
+
+    var lat1, lon1, lat2, lon2;
+
+    for (; i < l; ++i) {
+      location = locations.objectAtIndex(i) as CLLocation;
+      lastLocation = cachedLocation as CLLocation;
+      coordinate = location.coordinate;
+
+      if (lastLocation) {
+        if (calculateManually) {
+          lat1 = lastLocation.latitude;
+          lon1 = lastLocation.longitude;
+          lat2 = coordinate.latitude;
+          lon2 = coordinate.longitude;
+
+          var kmTraveled = 3963.0 * Math.acos(
+            Math.sin(lat1 / 57.2958) * Math.sin(lat2 / 57.2958)
+              + Math.cos(lat1 / 57.2958) * Math.cos(lat2 / 57.2958)
+              * Math.cos(lon2 / 57.2958 - lon1 / 57.2958)
+          );
+
+          totalTraveled += kmTraveled * 3280.8399;
+        }
+        else {
+          totalTraveled += location.distanceFromLocation(lastLocation) * 3.28084
+        }
+      }
+
+      cachedSpeed = location.speed;
+      cachedLocation = location;
+    }
+  }
+}
+
+class native GestureRecognizer
+  extends NSObject
+  protocol UIGestureRecognizerDelegate {
+
   //+ ((UIWindow*)*) gestureRecognize { return this; }
   + ((UIWindow*)*) gestureRecognize:(id)gesture lol:(id)x { return gesture + x; }
   //+ (UIWindow*) gestureRecognize:(id) gesture { return this; }
@@ -161,6 +214,11 @@ class native GestureRecognizer {
   //- "UIWindow" gestureRecognize:(id) gesture { return this; }
   //- void gestureRecognize:(id) gesture { return this; }
 };
+
+something as ((UIWindow*)*);
+something as (UIWindow*);
+something as UIWindow;
+something as id;
 
 console.log( objc_type_name ((UIWindow*)*) )
 console.log( objc_type_name (UIWindow*) )
