@@ -41,6 +41,12 @@ class native LocDelegate
 
     // Casting is done with the `as` keyword
     locations = locations as (NSArray *);
+
+    // Message passing is activated with `@` in dot-notation style
+    locationManager@startUpdatingLocation();
+
+    // Since the second argument we follow Swift’s form
+    locationManager@allowDeferredLocationUpdatesUntilTraveled(null, timeout: null);
   }
 }
 ```
