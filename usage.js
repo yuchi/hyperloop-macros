@@ -81,6 +81,7 @@ something as (UIWindow*);
 something as UIWindow;
 something as id;
 
+console.log( objc_type_name (UIWindow * *) )
 console.log( objc_type_name ((UIWindow*)*) )
 console.log( objc_type_name (UIWindow*) )
 console.log( objc_type_name (UIWindow) )

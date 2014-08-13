@@ -11,27 +11,23 @@ macro as {
 
 macroclass objc_type_alias {
   pattern {
-    rule { ( $to:objc_type_alias *) }
+    rule { ( $to:objc_type_alias $p:($[*] ...) ) }
     with $name = #{ $to$name }
-    with $pointer = #{ 1 $to$pointer }
-  }
-  pattern {
-    rule { ( $name:ident ) }
-    with $pointer = 0
+    with $pointer = #{ $p $to$pointer }
   }
   pattern {
     rule { $name:ident }
-    with $pointer = 0
+    with $pointer = ''
   }
   pattern {
     rule { ( void ) }
     with $name = #{ "void" }
-    with $pointer = 0
+    with $pointer = ''
   }
   pattern {
     rule { void }
     with $name = #{ "void" }
-    with $pointer = 0
+    with $pointer = ''
   }
 }
 
@@ -42,7 +38,7 @@ macro objc_type_name {
   }
   case { _ $t:objc_type_alias } => {
     var name = #{ $t$pointer }.reduce(function (memo, stx) {
-      return memo + (stx.token.value ? ' *' : '');
+      return memo + (stx.token.value ? ' ' + stx.token.value : '');
     }, unwrapSyntax(#{ $t$name }));
 
     return [ makeValue(name, #{ $t$name }) ];
