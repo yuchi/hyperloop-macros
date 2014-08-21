@@ -74,8 +74,8 @@ macro objc_method_params {
 }
 
 macroclass objc_method_alias {
-  pattern { rule { + $returns:objc_type_name $params:objc_method_params $body } with $static = #{1} }
-  pattern { rule { - $returns:objc_type_name $params:objc_method_params $body } with $static = #{0} }
+  pattern { rule { + $returns:objc_type_name $params:objc_method_params { $body ... } } with $static = #{1} }
+  pattern { rule { - $returns:objc_type_name $params:objc_method_params { $body ... } } with $static = #{0} }
 }
 
 macro objc_method {
@@ -83,39 +83,63 @@ macro objc_method {
     var params = #{ $m$params }.slice(0, -1);
     var name = unwrapSyntax(params[ 0 ]);
     var args = [];
-    var argNames = [];
+    var argTemps = [];
+    var argValues = [];
 
     var i = 0, l = params.length;
-    var argPart, argType;
+    var argPart, argType, argTemp, argName;
     var ctx = #{ $ctx };
+
 
     if (params[ 1 ].token.type !== parser.Token.NullLiteral) {
       for (; i < l; i += 3) {
+        // The part of the method as a string value
         argPart = unwrapSyntax(params[ i + 0 ]);
         argPart = makeValue(String(argPart), ctx);
+
+        // The type of the argument as a string value
         argType = unwrapSyntax(params[ i + 1 ]);
         argType = makeValue(String(argType), ctx);
+
+        // The temporary _arg for storing an uncasted argument, as ident
+        // (the underscore is not necessary because we have Sweet.js hygene,
+        // just for style)
+        argTemp = "_" + unwrapSyntax(params[ i + 2 ]);
+        // Passing `null` as a context ensures that this new ident cannot be
+        // referenced from the source code.
+        argTemp = makeIdent(String(argTemp), null);
+
+        // The actual name specified, as ident
         argName = unwrapSyntax(params[ i + 2 ]);
         argName = makeIdent(String(argName), ctx);
 
-        args = args.concat(#{,}).concat([ makeDelim( '{}', #{name:}.concat(argPart).concat(#{,}).concat(#{type:}).concat(argType), ctx) ]);
-        argNames = argNames.concat(#{,}).concat(argName);
+        args = args.concat(#{,}).concat([
+          makeDelim( '{}', #{name:}.concat(argPart).concat(#{,}).concat(#{type:}).concat(argType), ctx)
+        ]);
+
+        argTemps = argTemps.concat(#{,}).concat(argTemp);
+        argValues = argValues.concat(#{,}).concat(argName).concat(#{=}).concat(argTemp).concat(#{as}).concat(argType);
       }
 
       args = args.slice(1);
-      argNames = argNames.slice(1);
+      argTemps = argTemps.slice(1);
+      argValues = argValues.slice(1);
     }
 
     letstx $methodName = [ makeValue(name, #{ $m$params$name }) ];
     letstx $methodArgs = args;
-    letstx $funcArgs = argNames;
+    letstx $funcTemps = argTemps;
+    letstx $funcValues = argValues;
 
     return #{{
         name: $methodName,
         static: $m$static,
         returns: $m$returns,
         arguments: [ $methodArgs ],
-        action: function ( $funcArgs ) $m$body
+        action: function ( $funcTemps ) {
+          var $funcValues;
+          $m$body ...
+        }
     }}
   }
 }
