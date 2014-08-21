@@ -39,8 +39,8 @@ class native LocDelegate
   - (void) locationManager:(CLLocationManager *) locationManager
         didUpdateLocations:(NSArray *) locations {
 
-    // Casting is done with the `as` keyword
-    locations = locations as (NSArray *);
+    // Casting is done with the `as` keyword, but for arguments is not necessary
+    var locationsRecasted = locations as (NSArray *);
 
     // Message passing is activated with `@` in dot-notation style
     locationManager@startUpdatingLocation();
