@@ -59,7 +59,11 @@ class native GestureRecognizer
   protocol UIGestureRecognizerDelegate {
 
   //+ ((UIWindow*)*) gestureRecognize { return this; }
-  + ((UIWindow*)*) gestureRecognize:(id)gesture lol:(id)x { return gesture + x; }
+  - ((UIWindow*)*) gestureRecognize:(id)gesture lol:(id)x { return gesture + x; }
+  - ((UIWindow*)*) gestureRecognize:(id)gesture lol:(id)x {
+    var _gesture = 90, _x = 89;
+    return gesture + x;
+  }
   //+ (UIWindow*) gestureRecognize:(id) gesture { return this; }
   //+ (UIWindow) gestureRecognize:(id) gesture { return this; }
   //+ UIWindow gestureRecognize:(id) gesture { return this; }
