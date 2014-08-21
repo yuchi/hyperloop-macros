@@ -8,12 +8,10 @@ macro as {
     $l.cast($r)
   }
   rule infix { $l:ident | $r:objc_type_name } => {
-    ($l != null) && $l.cast($r)
+    $l.cast($r)
   }
   rule infix { $l:expr | $r:objc_type_name } => {
-    (function (v) {
-      return (v != null) && v.cast($r);
-    })($l)
+    ($l).cast($r)
   }
 }
 
