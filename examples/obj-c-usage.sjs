@@ -1,6 +1,8 @@
 
 // Usage
 // =====
+// This file contains a lot of useless things. It is mostly used for manual
+// testing and case coverage.
 
 use strict;
 use hyperloop;
