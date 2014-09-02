@@ -1,5 +1,5 @@
 
-require('should');
+var should = require('should');
 
 // Utils
 // -----
@@ -52,6 +52,11 @@ ClassInterface.prototype.implements = function (parent) {
 
 ClassInterface.prototype.protocol = function (protocol) {
   this._protocols.push(protocol);
+  return this;
+};
+
+ClassInterface.prototype.method = function (method) {
+  this._methods.push(method);
   return this;
 };
 
@@ -188,12 +193,79 @@ describe "Objective-C" {
         methods: []
       });
     }
-
-    TODO "method with no arguments"
-    TODO "method with one argument"
-    TODO "method with more than one argument"
-    TODO "automatic method argument casting"
-
   }
 
+  describe "Class methods" {
+    it "should work with no argument" {
+      var clazz = class native MyClass extends NSObject protocol NSProtocol {
+        - (NSNumber) aSimpleMethod {
+          return 42;
+        }
+      };
+
+      var method = clazz.methods[ 0 ];
+
+      method.should.have.properties({
+        name: 'aSimpleMethod',
+        static: 0,
+        returns: 'NSNumber',
+        arguments: []
+      });
+
+      should(method.action()).eql(42);
+    }
+
+    it "should work with one argument, automatically casted" {
+      var clazz = class native MyClass extends NSObject protocol NSProtocol {
+        - (NSString) aSimpleMethod:(NSString) arg {
+          return arg;
+        }
+      };
+
+      var method = clazz.methods[ 0 ];
+
+      method.should.have.properties({
+        name: 'aSimpleMethod',
+        static: 0,
+        returns: 'NSString',
+        arguments: [
+          {
+            name: 'aSimpleMethod',
+            type: 'NSString'
+          }
+        ]
+      });
+
+      should(method.action(receiver)).eql('@NSString');
+    }
+
+    it "should work with more than one argument" {
+      var clazz = class native MyClass extends NSObject protocol NSProtocol {
+        - (NSString) aSimpleMethod:(NSString) arg1
+                     withArguments:(NSNumber) arg2 {
+          return arg1 + arg2;
+        }
+      };
+
+      var method = clazz.methods[ 0 ];
+
+      method.should.have.properties({
+        name: 'aSimpleMethod',
+        static: 0,
+        returns: 'NSString',
+        arguments: [
+          {
+            name: 'aSimpleMethod',
+            type: 'NSString'
+          },
+          {
+            name: 'withArguments',
+            type: 'NSNumber'
+          }
+        ]
+      });
+
+      should(method.action(receiver, receiver)).eql('@NSString@NSNumber');
+    }
+  }
 }
