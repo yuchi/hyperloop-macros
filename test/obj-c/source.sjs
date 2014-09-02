@@ -69,6 +69,20 @@ ClassInterface.prototype.build = function () {
 
 describe "Objective-C" {
 
+  describe "Macro name collisions" {
+    it "should not happen on 'use'" {
+      var use = 42;
+
+      use.should.eql(42);
+    }
+
+    it "should not happen on 'as'" {
+      var as = 42;
+
+      as.should.eql(42);
+    }
+  }
+
   describe "Use macro" {
     it "should work" {
       (use hyperloop).should.eql('use hyperloop');
