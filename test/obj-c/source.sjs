@@ -84,8 +84,12 @@ describe "Objective-C" {
   }
 
   describe "Use macro" {
-    it "should work" {
+    it "should work for Hyperloop" {
       (use hyperloop).should.eql('use hyperloop');
+    }
+
+    it "should work for ES5 Strict Mode" {
+      (use strict).should.eql('use strict');
     }
   }
 
