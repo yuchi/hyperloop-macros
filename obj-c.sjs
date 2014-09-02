@@ -118,7 +118,7 @@ macro objc_method {
         ]);
 
         argTemps = argTemps.concat(#{,}).concat(argTemp);
-        argValues = argValues.concat(#{,}).concat(argName).concat(#{=}).concat(argTemp).concat(#{as}).concat(argType);
+        argValues = argValues.concat(#{;}).concat(#{ var }).concat(argName).concat(#{=}).concat(argTemp).concat(#{as}).concat(argType);
       }
 
       args = args.slice(1);
@@ -137,7 +137,7 @@ macro objc_method {
         returns: $m$returns,
         arguments: [ $methodArgs ],
         action: function ( $funcTemps ) {
-          var $funcValues;
+          $funcValues
           $m$body ...
         }
     }}
