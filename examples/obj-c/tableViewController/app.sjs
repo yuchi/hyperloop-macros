@@ -11,7 +11,7 @@ class native TableViewController extends UITableViewController {
     var tblClass = UITableViewCell.class();
     var tableView = that.tableView as UITableView;
 
-    tableView@registerClass(tblClass, forCellReuseIdentifier: cellId);
+    tableView.registerClass(tblClass, forCellReuseIdentifier: cellId);
   }
 
   - (NSInteger) numberOfSectionsInTableView: (UITableView *) tableView {
@@ -50,7 +50,7 @@ class native TableViewController extends UITableViewController {
 
 var frame = CGRectMake(100,100,20,20);
 var bounds = UIScreen.mainScreen().bounds;
-var window = UIWindow@initWithFrame(bounds);
+var window = UIWindow.initWithFrame(bounds);
 
 var UITableViewStylePlain = 0;
 var tableViewController = TableViewController@initWithStyle(UITableViewStylePlain);
@@ -62,9 +62,9 @@ tableViewController.onClick = function(e) {
   var row = e.row;
   var section = e.section;
   var tableView = e.tableView as UITableView;
-  var indexPath = NSIndexPath@indexPathForRow(row, inSection: section);
+  var indexPath = NSIndexPath.indexPathForRow(row, inSection: section);
 
-  tableView@deselectRowAtIndexPath(indexPath, animated: true);
+  tableView.deselectRowAtIndexPath(indexPath, animated: true);
 
   alert('TableView Clicked!\nSection: ' + section + '\nRow: ' + row);
 };

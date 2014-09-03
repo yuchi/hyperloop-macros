@@ -111,7 +111,7 @@ describe "Objective-C" {
     }
   }
 
-  describe "Method invocation" {
+  describe "Explicit method invocation with '@'" {
     it "should work with no argument" {
       receiver@method().should.eql('{RECEIVER} # method');
     }
@@ -122,6 +122,15 @@ describe "Objective-C" {
 
     it "should work with more than one argument" {
       receiver@method('arg1', withPieces:'arg2').should.eql('{RECEIVER} # method:withPieces:/arg1/arg2');
+    }
+  }
+
+  describe "Implicit method invocation with '.'" {
+    TODO "should not work with no argument";
+    TODO "should not work with one argument";
+
+    it "should work with more than one argument" {
+      receiver.method('arg1', withPieces: 'arg2').should.eql('{RECEIVER} # method:withPieces:/arg1/arg2');
     }
   }
 

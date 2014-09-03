@@ -196,12 +196,20 @@ macro (@) {
   }
 }
 
+let (.) = macro {
+  rule { $method ( $first:expr , $rest:( $part $[:] $arg:expr ) (,) ... ) } => {
+    @ $method ( $first , $rest (,) ... )
+  }
+  rule { $l } => { . $l }
+}
+
 // Public
 
 export use;
 export as;
 export class;
 export (@);
+export (.);
 
 // Protected
 
