@@ -1,2 +1,4 @@
+examples/*/*/build
+examples/**/*.js
 test/**/*.js
 node_modules
