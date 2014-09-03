@@ -74,8 +74,8 @@ macro objc_method_params {
 }
 
 macroclass objc_method_alias {
-  pattern { rule { + $returns:objc_type_name $params:objc_method_params { $body ... } } with $static = #{1} }
-  pattern { rule { - $returns:objc_type_name $params:objc_method_params { $body ... } } with $static = #{0} }
+  pattern { rule { + $returns:objc_type_name $params:objc_method_params { $body ... } } with $instance = #{ false } }
+  pattern { rule { - $returns:objc_type_name $params:objc_method_params { $body ... } } with $instance = #{ true } }
 }
 
 macro objc_method {
@@ -133,7 +133,7 @@ macro objc_method {
 
     return #{{
         name: $methodName,
-        static: $m$static,
+        instance: $m$instance,
         returns: $m$returns,
         arguments: [ $methodArgs ],
         action: function ( $funcTemps ) {

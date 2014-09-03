@@ -217,7 +217,7 @@ describe "Objective-C" {
     }
   }
 
-  describe "Class methods" {
+  describe "Class instance methods" {
     it "should work with no argument" {
       var clazz = class native MyClass extends NSObject protocol NSProtocol {
         - (NSNumber) aSimpleMethod {
@@ -229,7 +229,7 @@ describe "Objective-C" {
 
       method.should.have.properties({
         name: 'aSimpleMethod',
-        static: 0,
+        instance: true,
         returns: 'NSNumber',
         arguments: []
       });
@@ -248,7 +248,7 @@ describe "Objective-C" {
 
       method.should.have.properties({
         name: 'aSimpleMethod',
-        static: 0,
+        instance: true,
         returns: 'NSString',
         arguments: [
           {
@@ -273,7 +273,7 @@ describe "Objective-C" {
 
       method.should.have.properties({
         name: 'aSimpleMethod',
-        static: 0,
+        instance: true,
         returns: 'NSString',
         arguments: [
           {
@@ -288,6 +288,23 @@ describe "Objective-C" {
       });
 
       should(method.action(receiver, receiver)).eql('@NSString@NSNumber');
+    }
+  }
+
+  describe "Class static methods" {
+    it "should work with no argument" {
+      var clazz = class native MyClass extends NSObject protocol NSProtocol {
+        + (void) something {}
+      }
+
+      var method = clazz.methods[ 0 ];
+
+      method.should.have.properties({
+        name: 'something',
+        instance: false,
+        returns: 'void',
+        arguments: []
+      });
     }
   }
 }
