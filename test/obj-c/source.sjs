@@ -41,6 +41,10 @@ function ClassInterface (name) {
   this._protocols = [];
 }
 
+ClassInterface.class = function () {
+  return this;
+}
+
 ClassInterface.prototype.toString = function () {
   return '{' + this._name + '}';
 };
@@ -85,6 +89,15 @@ describe "Objective-C" {
       var as = 42;
 
       as.should.eql(42);
+    }
+
+    it "should not happen on 'something.class'" {
+      ClassInterface.class.should.equal(ClassInterface.class);
+    }
+
+    it "should not happen on 'something.class()'" {
+      ClassInterface.class().should.equal(ClassInterface);
+      ClassInterface.class(1).should.equal(ClassInterface);
     }
   }
 

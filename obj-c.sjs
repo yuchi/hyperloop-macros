@@ -149,7 +149,8 @@ macro objc_class_meta {
   rule { $mode:ident $type:objc_type_name } => { .$mode($type) }
 }
 
-macro class {
+// Using `let` to avoid recursion
+let class = macro {
   rule {
     native $className:ident
       $($meta:objc_class_meta) ...
@@ -162,6 +163,8 @@ macro class {
       $( .method($m) ) ...
       .build();
   }
+  // Fallback match all rule to support `.class`
+  rule { } => { class }
 }
 
 macroclass objc_message_param_alias {
