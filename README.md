@@ -47,6 +47,13 @@ class native LocDelegate
 
     // Since the second argument we follow Swift’s form
     locationManager@allowDeferredLocationUpdatesUntilTraveled(null, timeout: null);
+
+    // But Hyperloop supports actual dot notation too!
+    locationManager@startUpdatingLocation();
+
+    // so do we! Attention! not for 1 argument methods!
+    // see https://github.com/appcelerator/hyperloop-ios/issues/82
+    locationManager.allowDeferredLocationUpdatesUntilTraveled(null, timeout: null);
   }
 }
 ```
