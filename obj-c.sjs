@@ -87,7 +87,7 @@ macro objc_method {
     var argValues = [];
 
     var i = 0, l = params.length;
-    var argPart, argType, argTemp, argName;
+    var argPart, argCast, argType, argTemp, argName;
     var ctx = #{ $ctx };
 
     if (params[ 1 ].token.type !== parser.Token.NullLiteral) {
@@ -99,6 +99,10 @@ macro objc_method {
         // The type of the argument as a string value
         argType = unwrapSyntax(params[ i + 1 ]);
         argType = makeValue(String(argType), ctx);
+
+        // The type to cast to
+        argCast = unwrapSyntax(params[ i + 1 ]);
+        argCast = makeValue(String(argCast).replace(/[\s\*]*$/g, ''), ctx);
 
         // The temporary _arg for storing an uncasted argument, as ident
         // (the underscore is not necessary because we have Sweet.js hygene,
@@ -117,7 +121,7 @@ macro objc_method {
         ]);
 
         argTemps = argTemps.concat(#{,}).concat(argTemp);
-        argValues = argValues.concat(#{;}).concat(#{ var }).concat(argName).concat(#{=}).concat(argTemp).concat(#{as}).concat(argType);
+        argValues = argValues.concat(#{;}).concat(#{ var }).concat(argName).concat(#{=}).concat(argTemp).concat(#{as}).concat(argCast);
       }
 
       args = args.slice(1);

@@ -237,9 +237,9 @@ describe "Objective-C" {
       should(method.action()).eql(42);
     }
 
-    it "should work with one argument, automatically casted" {
+    it "should auto-cast arguments to concrete types" {
       var clazz = class native MyClass extends NSObject protocol NSProtocol {
-        - (NSString) aSimpleMethod:(NSString) arg {
+        - (NSString) aSimpleMethod:(NSString *) arg {
           return arg;
         }
       };
@@ -253,7 +253,7 @@ describe "Objective-C" {
         arguments: [
           {
             name: 'aSimpleMethod',
-            type: 'NSString'
+            type: 'NSString *'
           }
         ]
       });
