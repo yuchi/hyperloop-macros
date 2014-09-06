@@ -1,17 +1,20 @@
-"use hyperloop"
+use hyperloop;
 
 var data = ['hello', 'world', 'how', 'are', 'you', 'doing?'];
+
+Object.defineProperty(String.prototype, 'ns', {
+  enumerable: false,
+  value: function String$ns() {
+    return NSString.stringWithUTF8String(this);
+  }
+});
 
 class native TableViewController extends UITableViewController {
 
   - (void) viewDidLoad {
-    var that = this as UITableViewController;
+    var tableView = (this as UITableViewController).tableView as UITableView;
 
-    var cellId = NSString.stringWithUTF8String("Cell"); //this must be a NSString
-    var tblClass = UITableViewCell.class();
-    var tableView = that.tableView as UITableView;
-
-    tableView.registerClass(tblClass, forCellReuseIdentifier: cellId);
+    tableView.registerClass(UITableViewCell.class(), forCellReuseIdentifier: "Cell".ns());
   }
 
   - (NSInteger) numberOfSectionsInTableView: (UITableView *) tableView {
@@ -24,27 +27,21 @@ class native TableViewController extends UITableViewController {
   }
 
   - (UITableViewCell *) tableView: (UITableView *) tableView
-            cellForRowAtIndexPath: (NSIndexPath *) _path {
-    var that = this as UITableViewController;
-
-    var cellId = NSString.stringWithUTF8String("Cell"); // this must be a NSString
-    var cell = tableView.dequeueReusableCellWithIdentifier(cellId, path) as UITableViewCell;
+            cellForRowAtIndexPath: (NSIndexPath *) path {
+    var cell = tableView.dequeueReusableCellWithIdentifier("Cell".ns(), path) as UITableViewCell;
 
     if (!cell) {
       cell = new UITableViewCell();
     }
 
-    var path = _path as NSIndexPath;
-
-    var text = data[ path.row ];
-    cell.textLabel.text = NSString.stringWithUTF8String(text);
+    cell.textLabel.text = (data[ path.row ] + Math.random()).ns();
 
     return cell;
   }
 
   - (void) tableView: (UITableView *) tableView
-      didSelectRowAtIndexPath: (NSIndexPath *) _path {
-    console.log('click');
+      didSelectRowAtIndexPath: (NSIndexPath *) path {
+    console.log(String(this) + ' clicked ' + JSON.stringify(data[ path.row ]));
   }
 }
 
@@ -53,26 +50,16 @@ var bounds = UIScreen.mainScreen().bounds;
 var window = UIWindow@initWithFrame(bounds);
 
 var UITableViewStylePlain = 0;
-var tableViewController = TableViewController@initWithStyle(UITableViewStylePlain);
 
+var tableViewController = TableViewController@initWithStyle(UITableViewStylePlain);
 window.addSubview(tableViewController.tableView);
+
 window.makeKeyAndVisible();
 
-tableViewController.onClick = function(e) {
-  var row = e.row;
-  var section = e.section;
-  var tableView = e.tableView as UITableView;
-  var indexPath = NSIndexPath.indexPathForRow(row, inSection: section);
-
-  tableView.deselectRowAtIndexPath(indexPath, animated: true);
-
-  alert('TableView Clicked!\nSection: ' + section + '\nRow: ' + row);
-};
-
-function alert(_str) {
+function alert(message) {
   var alert = new UIAlertView();
-  alert.title = NSString.stringWithUTF8String("Alert");
-  alert.message = NSString.stringWithUTF8String(_str);
-  alert.addButtonWithTitle(NSString.stringWithUTF8String('Ok'));
+  alert.title = "Alert".ns();
+  alert.message = message.ns();
+  alert.addButtonWithTitle('Ok'.ns());
   alert.show();
 }
