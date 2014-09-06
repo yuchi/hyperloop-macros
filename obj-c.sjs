@@ -90,7 +90,6 @@ macro objc_method {
     var argPart, argType, argTemp, argName;
     var ctx = #{ $ctx };
 
-
     if (params[ 1 ].token.type !== parser.Token.NullLiteral) {
       for (; i < l; i += 3) {
         // The part of the method as a string value
@@ -155,7 +154,7 @@ let class = macro {
     native $className:ident
       $($meta:objc_class_meta) ...
     {
-      $($m:objc_method ) ...
+      $($m:objc_method) ...
     }
   } => {
     Hyperloop.defineClass($className)
