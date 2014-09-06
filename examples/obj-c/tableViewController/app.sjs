@@ -50,7 +50,7 @@ class native TableViewController extends UITableViewController {
 
 var frame = CGRectMake(100,100,20,20);
 var bounds = UIScreen.mainScreen().bounds;
-var window = UIWindow.initWithFrame(bounds);
+var window = UIWindow@initWithFrame(bounds);
 
 var UITableViewStylePlain = 0;
 var tableViewController = TableViewController@initWithStyle(UITableViewStylePlain);
