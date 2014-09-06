@@ -27,6 +27,8 @@ use hyperloop;
 
 ### Objective-C
 
+See the [example application](examples/obj-c/tableViewController).
+
 ```js
 // The `native` keyword makes the class compile to Hyperloop
 class native LocDelegate
