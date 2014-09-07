@@ -18,6 +18,13 @@ module.exports = function (grunt) {
         },
         src: 'test/obj-c/source.sjs',
         dest: 'test/obj-c/out.js'
+      },
+      "java": {
+        options: {
+          modules: [ './java', './test/macros' ]
+        },
+        src: 'test/java/source.sjs',
+        dest: 'test/java/out.js'
       }
     }
 
@@ -27,6 +34,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-sweet.js');
 
   grunt.registerTask('obj-c', [ 'sweetjs:obj-c', 'mochaTest' ]);
+  grunt.registerTask('java', [ 'sweetjs:java', 'mochaTest' ]);
 
-  grunt.registerTask('default', [ 'sweetjs:obj-c', 'mochaTest' ]);
+  grunt.registerTask('all', [ 'sweetjs:obj-c', 'sweetjs:java', 'mochaTest' ]);
+
+  grunt.registerTask('default', [ 'all' ]);
 };
