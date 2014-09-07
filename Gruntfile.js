@@ -26,7 +26,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-sweet.js');
 
-  grunt.registerTask('obj-c', [ 'sweetjs:obj-c', 'mochaTest' ])
+  grunt.registerTask('obj-c', [ 'sweetjs:obj-c', 'mochaTest' ]);
 
   grunt.registerTask('default', [ 'sweetjs:obj-c', 'mochaTest' ]);
 };
