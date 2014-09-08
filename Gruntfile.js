@@ -8,7 +8,12 @@ module.exports = function (grunt) {
       options: {
         reporter: 'spec'
       },
-      src: [ 'test/*/out.js' ]
+      "obj-c": {
+        src: 'test/obj-c/out.js'
+      },
+      "java": {
+        src: 'test/java/out.js'
+      }
     },
 
     sweetjs: {
@@ -33,10 +38,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-sweet.js');
 
-  grunt.registerTask('obj-c', [ 'sweetjs:obj-c', 'mochaTest' ]);
-  grunt.registerTask('java', [ 'sweetjs:java', 'mochaTest' ]);
+  grunt.registerTask('obj-c', [ 'sweetjs:obj-c', 'mochaTest:obj-c' ]);
+  grunt.registerTask('java', [ 'sweetjs:java', 'mochaTest:java' ]);
 
-  grunt.registerTask('all', [ 'sweetjs:obj-c', 'sweetjs:java', 'mochaTest' ]);
+  grunt.registerTask('all', [ 'sweetjs', 'mochaTest' ]);
 
   grunt.registerTask('default', [ 'all' ]);
 };
