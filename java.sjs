@@ -93,6 +93,11 @@ macro java_visibility_modifier {
   rule { }              => { "public" }
 }
 
+macro java_argument_modifier {
+  rule { final }        => { "final" }
+  rule {}               => {}
+}
+
 macro java_modifier {
   rule { static }       => { "static" }
   rule { final }        => { "final" }
@@ -114,9 +119,11 @@ macro java_value_to_string {
     // TODO This is a very naive `unwrap` implementation...
     function unwrap(o) {
       return o.map(unwrapSyntax).map(function (p) {
-        if (typeof p === 'string') return p;
-        else {
+        if (typeof p === 'object') {
           return p.value.slice(0, 1) + unwrap(p.inner) + p.value.slice(-1);
+        }
+        else {
+          return p;
         }
       }).join(' ');
     }
@@ -125,54 +132,93 @@ macro java_value_to_string {
   }
 }
 
+macroclass java_method_argument_alias {
+  pattern { rule { $final:java_argument_modifier $type:java_type_name $name:ident } }
+}
+
 macro java_class_member {
 
-  rule {
+  // Property (with value)
+
+  case {
+    $ctx
     $($ann:java_annotation ...)
     $vis:java_visibility_modifier
     $($mod:java_modifier ...)
     $type:java_type_name $name:ident
     = $value:java_value_to_string ;
   } => {
-    .property({
-      name: java_ident_to_string $name,
-      attributes: [ $vis , $mod (,) ... ],
-      annotations: [ $ann (,) ... ],
-      type: $type,
-      value: $value
-    })
+    return #{
+      .property({
+        name: java_ident_to_string $name,
+        attributes: [ $vis , $mod (,) ... ],
+        annotations: [ $ann (,) ... ],
+        type: $type,
+        value: $value
+      })
+    };
   }
 
-  rule {
+  // Property (without value)
+
+  case {
+    $ctx
     $($ann:java_annotation ...)
     $vis:java_visibility_modifier
     $($mod:java_modifier ...)
     $type:java_type_name $name:ident ;
   } => {
-    .property({
-      name: java_ident_to_string $name,
-      attributes: [ $vis , $mod (,) ... ],
-      annotations: [ $ann (,) ... ],
-      type: $type,
-      value: null
-    })
+    return #{
+      .property({
+        name: java_ident_to_string $name,
+        attributes: [ $vis , $mod (,) ... ],
+        annotations: [ $ann (,) ... ],
+        type: $type
+      })
+    };
   }
 
-  rule {
+  // Method
+
+  case {
+    $ctx
     $($ann:java_annotation ...)
     $vis:java_visibility_modifier
     $($mod:java_modifier ...)
-    $ret:java_type_name $name:ident
-    (  )
+    $ret:java_type_name $name
+    (
+      $( $($argAnn:java_annotation ...) $argType:java_type_name $argName:ident ) (,) ...
+    ) { $body ... }
   } => {
-    .method({
-      name: java_ident_to_string $name,
-      attributes: [ $vis , $mod (,) ... ],
-      returns: $ret,
-      arguments: [],
-      annotations: [ $ann (,) ... ],
-      action: null
-    })
+    letstx $args = #{
+      $({
+        annotations: [ $argAnn (,) ... ],
+        type: $argType,
+        name: java_ident_to_string $argName
+      }) (,) ...
+    };
+
+    var names = #{
+      $( $argType $argName ) (,) ...
+    }.reduce(function (memo, piece, n) {
+      if (n % 3 === 0) return memo;
+      else return memo.concat(piece);
+    }, []);
+
+    letstx $names = names;
+
+    return #{
+      .method({
+        name: java_ident_to_string $name,
+        attributes: [ $vis , $mod (,) ... ],
+        returns: $ret,
+        arguments: [ $args ],
+        annotations: [ $ann (,) ... ],
+        action: function ( $names ) {
+          $body ...
+        }
+      })
+    }
   }
 }
 
@@ -199,7 +245,7 @@ let class = macro {
         $meta ...
         $member ...
         .build()
-    };
+    }
   }
   case { $ctx } => {
     return #{ class }
