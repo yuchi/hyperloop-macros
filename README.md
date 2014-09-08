@@ -65,7 +65,31 @@ class native LocDelegate
 
 ### Java
 
-> TODO
+```js
+// `import`s let you skip the package later in the code
+import java.lang.Runnable;
+import java.lang.Object;
+import java.lang.Import;
+
+// The `native` keyword makes the class compile to Hyperloop
+class native public com.company.MyRunnable
+  extends Object
+  implements Runnable {
+
+  // Java style annotations...
+  @Override
+  // Method modifiers and return types
+  public void run() {
+    console.log('Here we are!');
+  }
+
+  // And Java style method arguments too!
+  public Integer someOtherMethod(Integer boxed, int unboxed) {
+    // Casting is done with the `as` keyword
+    return (boxed as int) + unboxed;
+  }
+}
+```
 
 ### C++
 
