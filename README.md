@@ -1,6 +1,9 @@
 Hyperloop Macros
 ================
 
+[![Build Status](https://img.shields.io/travis/yuchi/hyperloop-macros.svg?style=flat-square)](https://travis-ci.org/yuchi/hyperloop-macros)
+[![Dependencies](https://img.shields.io/david/dev/yuchi/hyperloop-macros.svg?style=flat-square)](https://david-dm.org/yuchi/hyperloop-macros#info=devDependencies)
+
 [Sweet.js][sjs] macros to accelerate Hyperloop development.
 
 By now only utilities for Objective-C were implemented;
