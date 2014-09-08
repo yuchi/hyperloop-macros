@@ -32,7 +32,7 @@ var receiver = {
   cast: function (to) { return '@' + to }
 };
 
-// fake meta-class
+// fake meta-class:
 
 function ClassInterface (name) {
   this._name = name;
