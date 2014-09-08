@@ -76,6 +76,13 @@ class native public com.company.MyRunnable
   extends Object
   implements Runnable {
 
+  // Java style properties...
+  String aField;
+  String anotherField;
+
+  // And transparent transformation of expressions!
+  int aPrimitive = 42;
+
   // Java style annotations...
   @Override
   // Method modifiers and return types
