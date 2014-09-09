@@ -7,7 +7,7 @@ Hyperloop Macros
 
 [Sweet.js][sjs] macros to accelerate Hyperloop development.
 
-By now only utilities for Objective-C were implemented;
+By now only utilities for Objective-C and Java were implemented;
 
 [sjs]: http://sweetjs.org/
 
