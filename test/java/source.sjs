@@ -292,7 +292,25 @@ describe "Java" {
       ]);
     }
 
-    TODO "methods arguments";
+    it "should support arguments’ type and name" {
+      var clazz = class native com.tests3.MyClass {
+        int a(int n, Integer i) {
+          return n + i;
+        }
+      };
+
+      var args = clazz.methods[ 0 ].arguments;
+
+      args[ 0 ].should.have.properties({ type: 'int', name: 'n' });
+      args[ 1 ].should.have.properties({ type: 'Integer', name: 'i' });
+    }
+
+    it "should correctly map argument names" {
+      class native com.tests3.MyClass {
+        int sum(int a, int b) { return a + b; }
+      }.methods[ 0 ].action( 1, 2 ).should.eql( 3 );
+    }
+
     TODO "generics in methods";
   }
 
