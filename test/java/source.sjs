@@ -239,9 +239,39 @@ describe "Java" {
   }
 
   describe "Class methods" {
-    TODO "methods smoke test";
-    TODO "methods attributes";
-    TODO "methods annotations";
+    it "should be optional" {
+      class native com.tests3.MyClass {}.methods.should.be.empty;
+    }
+
+    it "can have no action" {
+      class native com.tests3.MyClass {
+        void a();
+      }.methods[ 0 ].should.not.have.property('action');
+    }
+
+    it "should support all visibility modifiers" {
+      var clazz = class native com.tests3.MyClass {
+        public void a() {}
+        protected void b() {}
+        private void c() {}
+      };
+
+      clazz.methods[ 0 ].attributes.should.eql([ "public" ]);
+      clazz.methods[ 1 ].attributes.should.eql([ "protected" ]);
+      clazz.methods[ 2 ].attributes.should.eql([ "private" ]);
+    }
+
+    it "should default to 'public'" {
+      class native com.tests3.MyClass {
+        void a() {}
+      }.methods[ 0 ].attributes.should.eql([ "public" ]);
+    }
+
+    it "should support all modifiers" {
+      class native com.tests3.MyClass {
+        public static abstract synchronized void something() {}
+      }.methods[ 0 ].attributes.should.containEql("public", "static", "abstract", "synchronized");
+    }
 
     it "should support annotations" {
       class native com.tests3.MyClass {
