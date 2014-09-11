@@ -252,6 +252,35 @@ macro java_class_member {
     $ret:java_type_name $name
     (
       $( $($argAnn:java_annotation ...) $argType:java_type_name $argName:ident ) (,) ...
+    ) ;
+  } => {
+    letstx $args = #{
+      $({
+        annotations: [ $argAnn (,) ... ],
+        type: $argType,
+        name: java_ident_to_string $argName
+      }) (,) ...
+    };
+
+    return #{
+      .method({
+        name: java_ident_to_string $name,
+        attributes: [ $vis , $mod (,) ... ],
+        returns: $ret,
+        arguments: [ $args ],
+        annotations: [ $ann (,) ... ]
+      })
+    }
+  }
+
+  case {
+    $ctx
+    $($ann:java_annotation ...)
+    $vis:java_visibility_modifier
+    $($mod:java_modifier ...)
+    $ret:java_type_name $name
+    (
+      $( $($argAnn:java_annotation ...) $argType:java_type_name $argName:ident ) (,) ...
     ) { $body ... }
   } => {
     letstx $args = #{
