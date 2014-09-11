@@ -80,11 +80,75 @@ macro java_ident_to_string {
 }
 
 macro java_annotation {
+  case { $ctx @ $name:java_type_name ( $($element:java_annotation_element (,) ...) ) } => {
+    var value = #{ $element ... }.map(unwrapSyntax).join(', ');
+    var name = '@' + unwrapSyntax(#{ $name }) + '( ' + value + ' )';
+
+    return [ makeValue(name, #{ $ctx }) ];
+  }
   case { $ctx @ $name:java_type_name } => {
     var name = '@' + unwrapSyntax(#{ $name });
     return [ makeValue(name, #{ $ctx }) ];
   }
 }
+
+macro java_annotation_element {
+  rule { $el:java_element_value_pair } => { $el }
+  rule { $el:java_element_value } => { $el }
+}
+
+macro java_element_value_pair {
+  case { $ctx $name:ident = $value:java_element_value } => {
+    var name = unwrapSyntax(#{ $name });
+    var value = unwrapSyntax(#{ $value });
+    var old = value;
+    while (old !== (value = old.trim().replace(/^\(([\s\S]*)\)$/g, '$1').trim())) {
+      old = value;
+    }
+
+    if (typeof value !== 'string') throw new Error("oh!");
+    return [ makeValue(name + ' = ' + value, #{ $ctx }) ];
+  }
+}
+
+macro java_element_value {
+  rule { $ann:java_annotation } => { $ann }
+  rule { $arr:java_element_value_array_initializer } => { $arr }
+  rule { $exp:java_expr_to_string } => { $exp }
+}
+
+macro java_element_value_array_initializer {
+  case { $ctx { $($val:java_element_value (,) ...) } } => {
+    console.dir(#{ $val ... });
+    return [];
+  }
+}
+
+macro java_expr_to_string {
+  case { $ctx $e:expr } => {
+    function unwrap(toks) {
+      return toks.map(function (tok) {
+        switch (tok.token.type) {
+          case parser.Token.Delimiter:
+            return tok.token.value[0] + unwrap(tok.token.inner) + tok.token.value[1];
+          case parser.Token.StringLiteral:
+            return JSON.stringify(unwrapSyntax(tok));
+          default:
+            return unwrapSyntax(tok);
+        }
+      }).join(' ');
+    }
+
+    return [ makeValue(unwrap(#{ $e }), #{ $ctx }) ];
+  }
+}
+
+/*macro java_annotation {
+  case { $ctx @ $name:java_type_name } => {
+    var name = '@' + unwrapSyntax(#{ $name });
+    return [ makeValue(name, #{ $ctx }) ];
+  }
+}*/
 
 macro java_visibility_modifier {
   rule { public }       => { "public" }
@@ -224,7 +288,8 @@ macro java_class_member {
 
 let class = macro {
   case {
-    $ctx native $vis:java_visibility_modifier $($mod:java_modifier ...) $t:java_type_alias
+    $ctx native $vis:java_visibility_modifier $($mod:java_modifier ...) $($ann:java_annotation ...)
+      $t:java_type_alias
       $($meta:java_class_meta) ...
     {
       $($member:java_class_member) ...
@@ -240,6 +305,7 @@ let class = macro {
     letstx $className = [ makeIdent(name, ctx) ];
     return #{
       Hyperloop.defineClass($className)
+        .annotations([ $ann (,) ... ])
         .package($pack)
         .attributes([ $modifiers ])
         $meta ...

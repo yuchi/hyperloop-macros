@@ -37,6 +37,7 @@ var receiver = {
 function ClassInterface (name) {
   this._name = name;
   this._package = null;
+  this._annotations = [];
   this._attributes = [];
   this._methods = [];
   this._properties = [];
@@ -54,6 +55,11 @@ ClassInterface.prototype.toString = function () {
 
 ClassInterface.prototype.package = function (package) {
   this._package = package;
+  return this;
+};
+
+ClassInterface.prototype.annotations = function (annotations) {
+  this._annotations = this._annotations.concat(annotations);
   return this;
 };
 
@@ -86,6 +92,7 @@ ClassInterface.prototype.build = function () {
   return {
     name: this._name,
     package: this._package,
+    annotations: this._annotations,
     attributes: this._attributes,
     extends: this._extends,
     implements: this._implements,
@@ -210,12 +217,51 @@ describe "Java" {
       class native com.tests3.MyClass implements AAA {}.implements.should.eql([ 'com.tests3.AAA' ]);
       class native com.tests3.MyClass implements A, AAA, B {}.implements.should.eql([ 'A', 'com.tests3.AAA', 'B' ]);
     }
+
+    it "should support annotations" {
+      class native
+      @Annotation( key = value )
+      @Annotation( expressions = new Integer( o ) )
+      @Annotation( strings = "strings" )
+      @Annotation( numbers = 123 )
+      @Annotation( @Inner )
+      @Annotation( @Inner( key = value ) )
+      com.tests3.MyClass {}
+      .annotations.should.eql([
+        '@Annotation( key = value )',
+        '@Annotation( expressions = new Integer (o) )',
+        '@Annotation( strings = "strings" )',
+        '@Annotation( numbers = 123 )',
+        '@Annotation( @Inner )',
+        '@Annotation( @Inner( key = value ) )'
+      ]);
+    }
   }
 
   describe "Class methods" {
     TODO "methods smoke test";
     TODO "methods attributes";
     TODO "methods annotations";
+
+    it "should support annotations" {
+      class native com.tests3.MyClass {
+        @Annotation( key = value )
+        @Annotation( expressions = new Integer( o ) )
+        @Annotation( strings = "strings" )
+        @Annotation( numbers = 123 )
+        @Annotation( @Inner )
+        @Annotation( @Inner( key = value ) )
+        void method() {}
+      }.methods[ 0 ].annotations.should.eql([
+        '@Annotation( key = value )',
+        '@Annotation( expressions = new Integer (o) )',
+        '@Annotation( strings = "strings" )',
+        '@Annotation( numbers = 123 )',
+        '@Annotation( @Inner )',
+        '@Annotation( @Inner( key = value ) )'
+      ]);
+    }
+
     TODO "methods arguments";
     TODO "generics in methods";
   }
