@@ -191,8 +191,25 @@ describe "Java" {
       .attributes.should.containEql("static", "final", "native", "synchronized", "abstract", "threadsafe", "transient");
     }
 
-    TODO "extensions and interfaces";
-    TODO "class annotations";
+    it "should extend correctly" {
+      class native com.tests3.MyClass extends A {}.extends.should.eql([ 'A' ]);
+    }
+
+    it "should implement interfaces" {
+      class native com.tests3.MyClass implements A {}.implements.should.eql([ 'A' ]);
+      class native com.tests3.MyClass implements A, B {}.implements.should.eql([ 'A', 'B' ]);
+    }
+
+    import com.tests3.AAA;
+
+    it "should extend impoted types" {
+      class native com.tests3.MyClass extends AAA {}.extends.should.eql([ 'com.tests3.AAA' ]);
+    }
+
+    it "should implement imported types" {
+      class native com.tests3.MyClass implements AAA {}.implements.should.eql([ 'com.tests3.AAA' ]);
+      class native com.tests3.MyClass implements A, AAA, B {}.implements.should.eql([ 'A', 'com.tests3.AAA', 'B' ]);
+    }
   }
 
   describe "Class methods" {

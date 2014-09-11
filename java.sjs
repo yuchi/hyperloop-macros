@@ -110,7 +110,7 @@ macro java_modifier {
 
 macro java_class_meta {
   rule { extends $type:java_type_name } => { .extends($type) }
-  rule { implements $type:java_type_name } => { .implements($type) }
+  rule { implements $type:java_type_name (,) ... } => { $( .implements($type) ) ... }
   rule { $mode:ident $type:java_type_name } => { .$mode($type) }
 }
 
