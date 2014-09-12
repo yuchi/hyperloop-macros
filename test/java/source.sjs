@@ -269,8 +269,8 @@ describe "Java" {
 
     it "should support all modifiers" {
       class native com.tests3.MyClass {
-        public static abstract synchronized void something() {}
-      }.methods[ 0 ].attributes.should.containEql("public", "static", "abstract", "synchronized");
+        public static final native synchronized abstract threadsafe transient void something() {}
+      }.methods[ 0 ].attributes.should.containEql("public", "static", "final", "native", "synchronized", "abstract", "threadsafe", "transient");
     }
 
     it "should support annotations" {
