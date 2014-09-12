@@ -242,7 +242,7 @@ macro java_class_member {
     };
   }
 
-  // Method
+  // Method (without body)
 
   case {
     $ctx
@@ -272,6 +272,8 @@ macro java_class_member {
       })
     }
   }
+
+  // Method (with body)
 
   case {
     $ctx
