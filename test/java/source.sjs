@@ -195,7 +195,9 @@ describe "Java" {
 
     it "should work with modifiers" {
       class native static final native synchronized abstract threadsafe transient com.tests3.MyClass {}
-      .attributes.should.containEql("static", "final", "native", "synchronized", "abstract", "threadsafe", "transient");
+      .attributes.should.containEql(
+        "static", "final", "native", "synchronized", "abstract", "threadsafe", "transient"
+      );
     }
 
     it "should extend correctly" {
@@ -270,7 +272,9 @@ describe "Java" {
     it "should support all modifiers" {
       class native com.tests3.MyClass {
         public static final native synchronized abstract threadsafe transient void something() {}
-      }.methods[ 0 ].attributes.should.containEql("public", "static", "final", "native", "synchronized", "abstract", "threadsafe", "transient");
+      }.methods[ 0 ].attributes.should.containEql(
+        "public", "static", "final", "native", "synchronized", "abstract", "threadsafe", "transient"
+      );
     }
 
     it "should support annotations" {
