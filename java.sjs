@@ -212,12 +212,22 @@ macro java_class_member {
     $type:java_type_name $name:ident
     = $value:java_value_to_string ;
   } => {
+    var mods = #{ $mod ... }.map(unwrapSyntax);
+    var metatype = 'field';
+
+    if (mods.indexOf('static') >= 0 && mods.indexOf('final') >= 0) {
+      metatype = 'constant';
+    }
+
+    letstx $metatype = [ makeValue(metatype, #{ $ctx }) ];
+
     return #{
       .property({
         name: java_ident_to_string $name,
         attributes: [ $vis , $mod (,) ... ],
         annotations: [ $ann (,) ... ],
         type: $type,
+        metatype: $metatype,
         value: $value
       })
     };
@@ -232,11 +242,21 @@ macro java_class_member {
     $($mod:java_modifier ...)
     $type:java_type_name $name:ident ;
   } => {
+    var mods = #{ $mod ... }.map(unwrapSyntax);
+    var metatype = 'field';
+
+    if (mods.indexOf('static') >= 0 && mods.indexOf('final') >= 0) {
+      metatype = 'constant';
+    }
+
+    letstx $metatype = [ makeValue(metatype, #{ $ctx }) ];
+
     return #{
       .property({
         name: java_ident_to_string $name,
         attributes: [ $vis , $mod (,) ... ],
         annotations: [ $ann (,) ... ],
+        metatype: $metatype,
         type: $type
       })
     };
