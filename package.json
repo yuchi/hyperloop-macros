@@ -1,6 +1,6 @@
 {
   "name": "hyperloop-macros",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Macros to accelerate Hyperloop development",
   "scripts": {
     "test": "grunt"
