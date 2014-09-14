@@ -23,10 +23,10 @@
   },
   "homepage": "https://github.com/yuchi/hyperloop-macros",
   "devDependencies": {
-    "grunt-mocha-test": "~0.11.0",
-    "grunt-sweet.js": "~0.1.5",
-    "grunt": "~0.4.5",
-    "should": "~4.0.4",
-    "sweet.js": "~0.7.1"
+    "grunt": "^0.4.5",
+    "grunt-mocha-test": "^0.12.0",
+    "grunt-sweet.js": "^0.1.5",
+    "should": "^4.0.4",
+    "sweet.js": "^0.7.1"
   }
 }
