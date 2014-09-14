@@ -319,8 +319,66 @@ describe "Java" {
   }
 
   describe "Class properties" {
-    TODO "properties smoke test";
-    TODO "properties attributes";
+    it "should be optional" {
+      class native com.tests3.MyClass {}.properties.should.be.empty;
+    }
+
+    it "should support all visibility modifiers" {
+      var clazz = class native com.tests3.MyClass {
+        public int a = 0;
+        protected int b = 0;
+        private int c = 0;
+        public int aa;
+        protected int bb;
+        private int cc;
+      };
+
+      clazz.properties[ 0 ].attributes.should.eql([ "public" ]);
+      clazz.properties[ 1 ].attributes.should.eql([ "protected" ]);
+      clazz.properties[ 2 ].attributes.should.eql([ "private" ]);
+      clazz.properties[ 3 ].attributes.should.eql([ "public" ]);
+      clazz.properties[ 4 ].attributes.should.eql([ "protected" ]);
+      clazz.properties[ 5 ].attributes.should.eql([ "private" ]);
+    }
+
+    it "should default to 'public'" {
+      var clazz = class native com.tests3.MyClass {
+        int a = 0;
+        int aa;
+      };
+
+      clazz.properties[ 0 ].attributes.should.eql([ "public" ]);
+      clazz.properties[ 1 ].attributes.should.eql([ "public" ]);
+    }
+
+    it "should support all modifiers" {
+      class native com.tests3.MyClass {
+        public static final native synchronized abstract threadsafe transient int a;
+      }.properties[ 0 ].attributes.should.containEql(
+        "public", "static", "final", "native", "synchronized", "abstract", "threadsafe", "transient"
+      );
+    }
+
+    it "should support annotations" {
+      class native com.tests3.MyClass {
+        @Annotation( key = value )
+        @Annotation( expressions = new Integer( o ) )
+        @Annotation( strings = "strings" )
+        @Annotation( numbers = 123 )
+        @Annotation( @Inner )
+        @Annotation( @Inner( key = value ) )
+        int a;
+      }.properties[ 0 ].annotations.should.eql([
+        '@Annotation( key = value )',
+        '@Annotation( expressions = new Integer (o) )',
+        '@Annotation( strings = "strings" )',
+        '@Annotation( numbers = 123 )',
+        '@Annotation( @Inner )',
+        '@Annotation( @Inner( key = value ) )'
+      ]);
+    }
+
     TODO "properties annotations";
+    TODO "properties metatype";
   }
 }
