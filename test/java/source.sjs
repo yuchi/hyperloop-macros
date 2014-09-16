@@ -360,6 +360,7 @@ describe "Java" {
     }
 
     it "should support annotations" {
+      // without values
       class native com.tests3.MyClass {
         @Annotation( key = value )
         @Annotation( expressions = new Integer( o ) )
@@ -376,9 +377,38 @@ describe "Java" {
         '@Annotation( @Inner )',
         '@Annotation( @Inner( key = value ) )'
       ]);
+
+      // with values
+      class native com.tests3.MyClass {
+        @Annotation( key = value )
+        @Annotation( expressions = new Integer( o ) )
+        @Annotation( strings = "strings" )
+        @Annotation( numbers = 123 )
+        @Annotation( @Inner )
+        @Annotation( @Inner( key = value ) )
+        int a = 0;
+      }.properties[ 0 ].annotations.should.eql([
+        '@Annotation( key = value )',
+        '@Annotation( expressions = new Integer (o) )',
+        '@Annotation( strings = "strings" )',
+        '@Annotation( numbers = 123 )',
+        '@Annotation( @Inner )',
+        '@Annotation( @Inner( key = value ) )'
+      ]);
     }
 
-    TODO "properties annotations";
-    TODO "properties metatype";
+    it "should have the correct 'metatype'" {
+      var clazz = class native com.tests3.MyClass {
+        static final int CONSTANT_A = 0;
+        static final int CONSTANT_B;
+        int variable_a = 0;
+        int variable_b;
+      };
+
+      clazz.properties[ 0 ].metatype.should.eql('constant');
+      clazz.properties[ 1 ].metatype.should.eql('constant');
+      clazz.properties[ 2 ].metatype.should.eql('field');
+      clazz.properties[ 3 ].metatype.should.eql('field');
+    }
   }
 }
